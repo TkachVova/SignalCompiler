@@ -1,0 +1,8 @@
+D:\Vladymyr\IPZ1-OPT_PDF\SignalCompiler\SignalCompiler\bin\Debug\SignalCompiler.exe.config
+D:\Vladymyr\IPZ1-OPT_PDF\SignalCompiler\SignalCompiler\obj\Debug\SignalCompiler.csprojResolveAssemblyReference.cache
+D:\Vladymyr\IPZ1-OPT_PDF\SignalCompiler\SignalCompiler\obj\Debug\SignalCompiler.Properties.Resources.resources
+D:\Vladymyr\IPZ1-OPT_PDF\SignalCompiler\SignalCompiler\obj\Debug\SignalCompiler.csproj.GenerateResource.Cache
+D:\Vladymyr\IPZ1-OPT_PDF\SignalCompiler\SignalCompiler\bin\Debug\SignalCompiler.exe
+D:\Vladymyr\IPZ1-OPT_PDF\SignalCompiler\SignalCompiler\bin\Debug\SignalCompiler.pdb
+D:\Vladymyr\IPZ1-OPT_PDF\SignalCompiler\SignalCompiler\obj\Debug\SignalCompiler.exe
+D:\Vladymyr\IPZ1-OPT_PDF\SignalCompiler\SignalCompiler\obj\Debug\SignalCompiler.pdb
