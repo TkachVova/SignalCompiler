@@ -36,7 +36,7 @@ namespace SignalCompiler
         public static string commentSymbol = "*";
         public static string endCom = ")";
 
-     
+
 
         public List<LexicalAnalizerOutput> MakeLexemLine(string filepath)
         {
@@ -74,36 +74,36 @@ namespace SignalCompiler
                         buffer_for_lexems = "";
                         currLexem = "";
 
-                        if (symbolAttr == (int) attrType.whitespace) // whitespace
+                        if (symbolAttr == (int)attrType.whitespace) // whitespace
                         {
                             while (++j < currentLine.Length)
                             {
                                 currentSymbol = currentLine[j];
                                 symbolAttr = GetSymbolAttr(currentSymbol);
-                                if (symbolAttr != (int) attrType.whitespace)
+                                if (symbolAttr != (int)attrType.whitespace)
                                     break;
                             }
                             lineWhiteSpaced = true;
                         }
-                        else if (symbolAttr == (int) attrType.constant) // constant
+                        else if (symbolAttr == (int)attrType.constant) // constant
                         {
                             buffer_for_lexems = BuferizeLexem(currentLine, attrType.constant, ref j);
                             currLexem = buffer_for_lexems;
                             lexCode = GetConstantLexCode(buffer_for_lexems);
                         }
-                        else if (symbolAttr == (int) attrType.identifier) // identifier
+                        else if (symbolAttr == (int)attrType.identifier) // identifier
                         {
                             buffer_for_lexems = BuferizeLexem(currentLine, attrType.identifier, ref j);
                             currLexem = buffer_for_lexems;
                             lexCode = GetIndentifierLexCode(buffer_for_lexems);
                         }
-                        else if (symbolAttr == (int) attrType.oneSymbDelimiter) // divider
+                        else if (symbolAttr == (int)attrType.oneSymbDelimiter) // divider
                         {
                             lexCode = (int)currentSymbol;
                             currLexem = currentSymbol.ToString();
                             j++;
                         }
-                            //some shit code =)
+                        //some shit code =)
                         else if (currentSymbol == ':')
                         {
                             buffer_for_lexems = Find_equel(currentLine, ref j);
@@ -113,10 +113,13 @@ namespace SignalCompiler
                                 lexCode = GetIndentifierLexCode(buffer_for_lexems);
                             }
                         }
-                        else if (symbolAttr == (int) attrType.begCom) // Comment
+                        else if (symbolAttr == (int)attrType.begCom) // Comment
                         {
+                            int indexBeforeDelete = i;
                             DeleteComment(lines, ref i, ref j);
                             lineWhiteSpaced = true;
+                            if (indexBeforeDelete != i)
+                                break;
                         }
                         else
                         {
@@ -145,7 +148,7 @@ namespace SignalCompiler
         }
 
         //devides lexem (identifier or constant) from line
-        private string BuferizeLexem(string currentLine, attrType type, ref int j)  
+        private string BuferizeLexem(string currentLine, attrType type, ref int j)
         {
             string buffer = "";
             char currentSymbol = currentLine[j];
@@ -155,7 +158,7 @@ namespace SignalCompiler
                 currentSymbol = currentLine[j];
                 int symbolAttr = GetSymbolAttr(currentSymbol);
                 // if type == constant it takes only digits, if identifier it takes letters or digits starting from second symbol
-                if (symbolAttr == (int) type || symbolAttr == (int) attrType.constant)
+                if (symbolAttr == (int)type || symbolAttr == (int)attrType.constant)
                     buffer += currentSymbol.ToString();
                 else break;
             }
@@ -163,7 +166,7 @@ namespace SignalCompiler
         }
 
         //devides lexem := from line
-        private string Find_equel (string currentLine,  ref int j)
+        private string Find_equel(string currentLine, ref int j)
         {
             string buffer = "";
             char currentSymbol = currentLine[j];
@@ -182,7 +185,7 @@ namespace SignalCompiler
         }
 
         // returns lexCode, if not present in constants returns new id
-        private int GetConstantLexCode(string constStr) 
+        private int GetConstantLexCode(string constStr)
         {
             int lexCode = 0;
             if (constants.Count() == 0)
@@ -206,7 +209,7 @@ namespace SignalCompiler
         }
 
         // returns lexCode of identifier 
-        private int GetIndentifierLexCode(string identifierStr) 
+        private int GetIndentifierLexCode(string identifierStr)
         {
             int lexCode = 0;
 
@@ -246,11 +249,12 @@ namespace SignalCompiler
 
         private void DeleteComment(string[] lines, ref int i, ref int j)
         {
+
             int entry_i = i;
             int entry_j = j;
             string currentLine = lines[i];
             char currentSymbol = currentLine[j];
-            //bool commentSkipped = false;
+
             j++;
 
             if (j < currentLine.Length)
@@ -269,17 +273,19 @@ namespace SignalCompiler
 
             if (currentSymbol == (char)commentSymbol[0]) // if (*
             {
+                j++;
                 for (int k = i; k < lines.Count(); k++)
                 {
                     currentLine = lines[k];
-                    while (++j < currentLine.Length - 1)
+                    while (j < currentLine.Length - 1)
                     {
                         currentSymbol = currentLine[j];
                         char nextSymbol = currentLine[j + 1];
+                        j++;
                         if (currentSymbol == commentSymbol[0] && nextSymbol == endCom[0]) // end of Comment found
                         {
                             i = k;
-                            j += 2; // skip "*)"
+                            j += 1; // skip "*)"
                             return;
                         }
                     }
@@ -296,7 +302,7 @@ namespace SignalCompiler
                 // ERROR ("Do u mean comment? '*' missing")
                 errors.Add(new Error { message = "**Error** Do u mean comment? '*' missing", row = i, pos = j });
             }
-        }
 
+        }
     }
 }

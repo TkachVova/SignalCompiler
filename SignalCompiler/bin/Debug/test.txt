@@ -10,9 +10,18 @@ BEGIN
 	    VARIABLE2 := 1 + 2 TO 5 - 1 DO
 	ENDFOR;	
 END.	
+(*)
 (**)
 (****
 MULTILINE 
 COMMENT 
 FOOOO
 *****)
+(* CLOSE ME
+
+(*
+tejytbjvdfhyivd
+j
+*)
+(*****************************************)
+(**)
