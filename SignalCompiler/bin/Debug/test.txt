@@ -1,13 +1,14 @@
-PROGRAM HELLOWORLD; (* valid comment *)
+PROGRAM HELLOWORLD; (*
+v
+a
+l
+id comment *)
 BEGIN 
-	LOOP
-		FOR                     
-			VARIABLE1 := 1TO8DO
-		ENDFOR;           
-	ENDLOOP;           
-	(**********************************)
 	FOR 
-	    VARIABLE2 := 1 + 2 TO 5 - 1 DO
+	    VARIABLE2 := VARIABLE2 + 1 + 2 TO 5 + 5 - 1 DO
+		FOR 
+			VARIABLE2 := 0 TO 999 DO
+		ENDFOR;	
 	ENDFOR;	
 END.	
 (*)

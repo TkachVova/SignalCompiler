@@ -7,6 +7,9 @@ using System.Diagnostics;
 using System.Xml.Serialization;
 using System.IO;
 using SignalCompiler.Domain;
+using System.Threading;
+using lexer.SyntaxTree;
+using System.Xml;
 
 namespace SignalCompiler
 {
@@ -18,21 +21,32 @@ namespace SignalCompiler
         private static string attributesTablePath = path + @"\AttributesTable.xml";
         private static string keyWordsTablePath = path + @"\KeyWordsTable.xml";
         private static string identifiersTablePath = path + @"\IdentifiersTable.xml";
+
+        private static string SyntaxTreeGraphPath = path + @"\SyntaxTreeGraph.dgml";
+        private static string SyntaxTreePath = path + @"\SyntaxTree.xml";
+
+
+        private static Mutex mutexForSerializedFiles = new Mutex();
         private static void Serialize(object obj, string path)
         {
+            mutexForSerializedFiles.WaitOne();
             Type objectType = obj.GetType();
             XmlSerializer writer = new XmlSerializer(objectType);
             StreamWriter file = new StreamWriter(path);
             writer.Serialize(file, obj);
             file.Close();
+            mutexForSerializedFiles.ReleaseMutex();
         }
 
         private static void Deserialize(ref object obj, string path)
         {
+            mutexForSerializedFiles.WaitOne();
             Type objectType = obj.GetType();
             XmlSerializer reader = new XmlSerializer(objectType);
             StreamReader file = new StreamReader(path);
             obj = reader.Deserialize(file);
+            file.Close();
+            mutexForSerializedFiles.ReleaseMutex();
         }
         
         private static char[] GenerateCharArray(char start, char fin)
@@ -133,7 +147,36 @@ namespace SignalCompiler
 
             return (List<KeyWord>)obj;
         }
-      
+        public static void SeriaizeNodeGraph(Graph graph)
+        {
+            mutexForSerializedFiles.WaitOne();
+
+            Type graphType = typeof(Graph);
+            XmlRootAttribute root = new XmlRootAttribute("DirectedGraph");
+            root.Namespace = "http://schemas.microsoft.com/vs/2009/dgml";
+            XmlSerializer serializer = new XmlSerializer(graphType, root);
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            XmlWriter xmlWriter = XmlWriter.Create(SyntaxTreeGraphPath, settings);
+            serializer.Serialize(xmlWriter, graph);
+            xmlWriter.Dispose();
+            mutexForSerializedFiles.ReleaseMutex();
+        }
+
+        public static void SeriaizeNode(XMLNode node)
+        {
+            Serialize(node, SyntaxTreePath);
+        }
+        public static XMLNode DeseriaizeNode()
+        {
+            XMLNode XMLNode = new XMLNode();
+            object obj = (object)XMLNode;
+            Deserialize(ref obj, SyntaxTreePath);
+
+            Debug.Print("\nSyntaxTree deserialized");
+
+            return (XMLNode)obj;
+        }
     }
     
 }

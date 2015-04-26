@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using lexer;
 
 namespace SignalCompiler
 {
@@ -18,7 +19,11 @@ namespace SignalCompiler
             InitializeComponent();
             LexicalAnalizer lexicalAnalizer = new LexicalAnalizer();
             string path = System.IO.Directory.GetCurrentDirectory() + @"\test.txt";
+
             List<LexicalAnalizerOutput> result = lexicalAnalizer.MakeLexemLine(path);
+
+            
+
             foreach (var item in result)
             {
                 Debug.Print("Lexem: {0}\tCode: {1}", item.lexem, item.code);
@@ -30,6 +35,18 @@ namespace SignalCompiler
                 {
                     Debug.Print(item.message + " in row {0}, position {1}", item.row.ToString(), item.pos.ToString());
                 }
+            }
+
+            SyntaxAnalizer syntaxer = new SyntaxAnalizer(result, lexicalAnalizer.constants, lexicalAnalizer.identifiers, lexicalAnalizer.keyWords);
+            syntaxer.WorkDone += new SyntaxAnalizer.WorkDoneHandler(SyntaxerWorkDone);
+            syntaxer.Analize();
+        }
+
+        private void SyntaxerWorkDone(List<Domain.Error> errors, List<Domain.IdentifierExt> identifiersExt)
+        {
+            foreach (var item in errors)
+            {
+                Debug.Print(String.Format(item.message + " in row {0}\n", item.row.ToString()));
             }
         }
     }

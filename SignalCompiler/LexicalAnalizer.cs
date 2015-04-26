@@ -13,6 +13,7 @@ namespace SignalCompiler
     {
         public int code;
         public string lexem;
+        public int row;
     }
     class LexicalAnalizer
     {
@@ -28,9 +29,9 @@ namespace SignalCompiler
         }
 
         private List<Attributes> attributes;
-        private List<Identifier> identifiers;
-        private List<KeyWord> keyWords;
-        private List<Constant> constants;
+        public List<Identifier> identifiers;
+        public List<KeyWord> keyWords;
+        public List<Constant> constants;
         public List<Error> errors;
 
         public static string commentSymbol = "*";
@@ -129,7 +130,7 @@ namespace SignalCompiler
                         }
                         if (!lineWhiteSpaced)
                         {
-                            result.Add(new LexicalAnalizerOutput { code = lexCode, lexem = currLexem });
+                            result.Add(new LexicalAnalizerOutput { code = lexCode, lexem = currLexem, row = i });
                         }
                     }
 
