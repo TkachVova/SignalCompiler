@@ -3,18 +3,47 @@
 .STACK	256
 .CODE
 HELLOWORLD	PROC
-l1:
-l2:
-l3:
-jmp l3
-jmp l2
-jmp l1
+push ax
+push cx
 xor ax, ax
 add ax, VAR2
 sub ax, 2
 add ax, 3
 sub ax, VAR1
 mov VAR1, ax
+xor ax, ax
+add ax, 3
+cmp ax, VAR1
+jl l1
+sub ax, VAR1
+mov cx, ax
+l2:
+push ax
+push cx
+xor ax, ax
+sub ax, 1
+mov VAR3, ax
+xor ax, ax
+add ax, 2
+cmp ax, VAR3
+jl l3
+sub ax, VAR3
+mov cx, ax
+l4:
+mov ax, VAR3
+add ax, 1
+mov VAR3, ax
+loop l4
+l3:
+pop ax
+pop cx
+mov ax, VAR1
+add ax, 1
+mov VAR1, ax
+loop l2
+l1:
+pop ax
+pop cx
 mov	ah,4Ch
 mov	al,0
 int	21h

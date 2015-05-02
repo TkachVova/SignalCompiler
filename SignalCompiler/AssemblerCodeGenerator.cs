@@ -113,6 +113,8 @@ namespace SignalCompiler
         private void ParseNode(XMLNode parentNode)
         {
             bool parseStatement = false; // if true then do custom parse not just straight going throw the tree
+            if (parentNode.name == nodesTypes.loop_declaration)
+                parseStatement = true;
             foreach (var item in parentNode.nodes)
             {
                 if (item.name == nodesTypes.procedure_idn)
@@ -158,15 +160,38 @@ namespace SignalCompiler
                     string statementType = statement.First(x => x.name == nodesTypes.token).value;
                     if (statementType == "FOR")
                     {
+                        WritePush();
                         string var_idn = statement.First(x => x.name == nodesTypes.variable_identifier)
                                                   .nodes.First(x => x.name == nodesTypes.identifier)
                                                   .nodes.First(x => x.name == nodesTypes.token).value;
                         List<XMLNode> loop_declaration_expressions = statement.First(x => x.name == nodesTypes.loop_declaration)
                                                                         .nodes.FindAll(x => x.name == nodesTypes.expression);
                         ParseExpression(loop_declaration_expressions[0]);
+                        
                         WriteForInitialization(var_idn); // here in ax we have calculated expression
                         ParseExpression(loop_declaration_expressions[1]);
                         WriteCMP("ax", var_idn);
+                        labelNumber++;
+                        string label_for_jumping_if_low_bound_is_higher_than_high_bound = "l" + labelNumber.ToString();
+                        WriteJL(label_for_jumping_if_low_bound_is_higher_than_high_bound);
+                        //here goes code
+                        WriteCalculationOfStep(var_idn);
+                        labelNumber++;
+                        string label_for_cycl = "l" + labelNumber.ToString();
+                        WriteLabel(label_for_cycl);
+                        if (statement.First(x => x.name == nodesTypes.loop_declaration).nodes.Exists(x => x.name == nodesTypes.statement_list))
+                        {
+                            ParseNode(statement.First(x => x.name == nodesTypes.loop_declaration));
+
+                        }
+                        else 
+                        {
+                            // NO CODE; WRITE NOP HERE (OR DO NOTHING)
+                        }
+                        WriteCycle(var_idn, label_for_cycl);
+
+                        WriteLabel(label_for_jumping_if_low_bound_is_higher_than_high_bound);
+                        WritePop();
                     }
                     else 
                     {
@@ -188,9 +213,46 @@ namespace SignalCompiler
             }
         }
 
-        private void WriteCMP(string p, string var_idn)
+        private void WritePush()
         {
-            throw new NotImplementedException();
+            string writePush = String.Format("push ax\npush cx\n");
+            resultAsmCode = resultAsmCode.Insert(codeSegmentPos, writePush);
+            codeSegmentPos += writePush.Length;
+        }
+
+        private void WritePop()
+        {
+            string writePop = String.Format("pop ax\npop cx\n");
+            resultAsmCode = resultAsmCode.Insert(codeSegmentPos, writePop);
+            codeSegmentPos += writePop.Length;
+        }
+
+        private void WriteCycle(string var_idn, string label)
+        {
+            string writeCycl = String.Format("mov ax, {0}\nadd ax, 1\nmov {0}, ax\nloop {1}\n", var_idn, label);
+            resultAsmCode = resultAsmCode.Insert(codeSegmentPos, writeCycl);
+            codeSegmentPos += writeCycl.Length;
+        }
+
+        private void WriteCalculationOfStep(string var_idn)
+        {
+            string writeCalc = String.Format("sub ax, {0}\nmov cx, ax\n", var_idn);
+            resultAsmCode = resultAsmCode.Insert(codeSegmentPos, writeCalc);
+            codeSegmentPos += writeCalc.Length;
+        }
+
+        private void WriteJL(string label)
+        {
+            string writeJL = String.Format("jl {0}\n", label);
+            resultAsmCode = resultAsmCode.Insert(codeSegmentPos, writeJL);
+            codeSegmentPos += writeJL.Length;
+        }
+
+        private void WriteCMP(string reg, string var_idn)
+        {
+            string writeCMP = String.Format("cmp {0}, {1}\n", reg, var_idn);
+            resultAsmCode = resultAsmCode.Insert(codeSegmentPos, writeCMP);
+            codeSegmentPos += writeCMP.Length;   
         }
 
         private void ParseExpression(XMLNode expression)
