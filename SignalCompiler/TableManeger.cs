@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 using System.IO;
 using SignalCompiler.Domain;
 using System.Threading;
-using lexer.SyntaxTree;
+using SignalCompiler.SyntaxTree;
 using System.Xml;
 
 namespace SignalCompiler

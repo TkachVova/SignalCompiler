@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SignalCompiler.SyntaxTree;
 
-namespace lexer
+namespace SignalCompiler
 {
     public enum nodesTypes
     {
@@ -112,8 +113,10 @@ namespace lexer
                     {
                         errors.Add(new Error { message = "**Error** ';' expected", row = currentToken.row });
                     }
-
+                    positionInLexems--;
+                    int prevRow = GetNextToken().row; //if no tokens after that one
                     currentToken = GetNextToken();
+                    
                     if (currentToken.lexem == ".")
                     {
                         currentNode.AddNode(new SyntaxTree.XMLNode() { name = nodesTypes.token, value = currentToken.lexem });
@@ -122,7 +125,10 @@ namespace lexer
                             errors.Add(new Error { message = "**Error** Expected end of program", row = currentToken.row });
                     }
                     else
-                        errors.Add(new Error { message = "**Error** '.' expected", row = currentToken.row });
+                    {
+                        errors.Add(new Error { message = "**Error** '.' expected", row = prevRow});
+                    }
+                        
                 }
                 else
                 {
@@ -159,7 +165,7 @@ namespace lexer
             else
             {
                 //errors.Add(new Error { message = "**Error** Expected user identifier", row = currentToken.row });
-                return new LexicalAnalizerOutput() { lexem = "" };
+                return new LexicalAnalizerOutput() { row=currentToken.row, lexem = "" };
             }
         }
 
@@ -441,9 +447,8 @@ namespace lexer
                                 .AddNode(new SyntaxTree.XMLNode() { name = nodesTypes.token, value = currentToken.lexem });
                     return true;
                 }
-                else
-                    errors.Add(new Error { message = "**Error** Expected summand", row = currentToken.row });
             }
+            curr.nodes.Remove(currentNode);
             return false;
         }
        

@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblerCodeGenerator.cs" />
     <Compile Include="Domain\Attributes.cs" />
     <Compile Include="Domain\Connstant.cs" />
     <Compile Include="Domain\Error.cs" />

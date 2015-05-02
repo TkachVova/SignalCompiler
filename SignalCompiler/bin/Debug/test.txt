@@ -1,16 +1,20 @@
-PROGRAM HELLOWORLD; (*
-v
-a
-l
-id comment *)
-BEGIN 
-	FOR 
-	    VARIABLE2 := VARIABLE2 + 1 + 2 TO 5 + 5 - 1 DO
-		FOR 
-			VARIABLE2 := 0 TO 999 DO
-		ENDFOR;	
-	ENDFOR;	
-END.	
+PROGRAM HELLOWORLD; 
+ 
+	BEGIN 
+	    
+	LOOP
+	LOOP
+	LOOP
+	ENDLOOP;
+	ENDLOOP;
+	ENDLOOP;
+	
+	FOR VAR1 := VAR2 - 2 + 3 - VAR1 TO 3 DO ENDFOR; 
+	
+END .
+
+
+
 (*)
 (**)
 (****

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
-using lexer;
+using SignalCompiler;
 
 namespace SignalCompiler
 {
@@ -40,6 +40,12 @@ namespace SignalCompiler
             SyntaxAnalizer syntaxer = new SyntaxAnalizer(result, lexicalAnalizer.constants, lexicalAnalizer.identifiers, lexicalAnalizer.keyWords);
             syntaxer.WorkDone += new SyntaxAnalizer.WorkDoneHandler(SyntaxerWorkDone);
             syntaxer.Analize();
+
+            AssemblerCodeGenerator parser = new AssemblerCodeGenerator();
+            string asmCode = parser.GenerateCode();
+            string AsmPath = System.IO.Directory.GetCurrentDirectory() + @"\asmCode.txt";
+            System.IO.File.WriteAllText(AsmPath, asmCode);
+
         }
 
         private void SyntaxerWorkDone(List<Domain.Error> errors, List<Domain.IdentifierExt> identifiersExt)

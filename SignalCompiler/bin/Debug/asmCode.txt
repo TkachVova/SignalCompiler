@@ -1,0 +1,22 @@
+.386
+.MODEL	small
+.STACK	256
+.CODE
+HELLOWORLD	PROC
+l1:
+l2:
+l3:
+jmp l3
+jmp l2
+jmp l1
+xor ax, ax
+add ax, VAR2
+sub ax, 2
+add ax, 3
+sub ax, VAR1
+mov VAR1, ax
+mov	ah,4Ch
+mov	al,0
+int	21h
+HELLOWORLD	ENDP
+END	HELLOWORLD
